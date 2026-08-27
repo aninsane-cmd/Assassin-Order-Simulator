@@ -399,6 +399,26 @@ public class MasterMovement : MonoBehaviour
             if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) input.y -= 1;
         }
 
+2. Add a resource node to the world
+
+Create a new sprite (2D Object → Sprites → Square works as placeholder), rename it StickNode, give it a distinct color (brown), place it somewhere away from the master's spawn point
+Add a Collider2D (set to "Is Trigger") so the master can detect proximity without physically blocking it
+
+3. Detect when master is near a node
+
+Add a Collider2D + Rigidbody2D (kinematic, since you're moving via transform) to the master too — you need at least one Rigidbody2D in a trigger pair for Unity's physics to fire OnTriggerEnter2D
+Write a small script (or extend masterMovement) that detects overlap with StickNode and flags "in range"
+
+4. Interact input
+
+When in range, pressing a key (say, E or a mobile-friendly on-screen button) triggers gather
+This should call into your existing Dictionary<string,int> inventory system — same inventory["Stick"] += amount pattern you already built, just triggered by proximity+keypress instead of a menu button
+
+5. Node depletion (optional but good to nail now)
+
+Node disappears or goes on cooldown after gathering, so the loop feels like real gathering, not an infinite button press
+
+That sequence gets you the actual Chapter 1 tutorial verb — "master walks up to a resource and gathers it" — fully working end-to-end, which is the last piece separating you from a real vertical slice of your opening chapter.
         Vector3 movement = new Vector3(input.x, input.y, 0f).normalized;
         transform.position += movement * moveSpeed * Time.deltaTime;
     }
