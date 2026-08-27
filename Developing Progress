@@ -1,27 +1,14 @@
-I want to create a mobile game, open world pixel style, with simulator crafting and building game about assassin guild master. This master's role is as a leader, started from scratch gathering materials to build hideout, recruit assassin, accepting commission, crafting weapon, poison, maintaining food supply with gathering or farming, until he can build assassin castle, recruit legendary assassin, and accepting commission that can change the course of history. The details can be discussed later. If I want to build this game from the scratch, what I need to do first?
+I want to create a mobile game, open world pixel style, with simulator crafting and building game about assassin order simulator. This master's role is as a manager, started from scratch gathering materials to build hideout, recruit assassin, accepting commission, crafting weapon, poison, maintaining food supply with gathering or farming, until he can build assassin castle, recruit legendary assassin, and accepting commission that can change the course of history.
 
-1. Lock a one-page design pillar doc (not a full GDD yet)
-Just the core loop, the "master can do it or delegate" pillar, and your 3-5 non-negotiable features. This keeps you from scope-creeping while you build.
+A. Build the core loop first, ugly and small using placeholder 
+Before art — prototype the systems: gather resource → craft item.
 
-2. Build the core loop first, ugly and small
-Before art, before content — prototype the systems: gather resource → craft item → assign assassin → timer → collect result. If this loop isn't satisfying with placeholder squares, no amount of pixel art will save it. This is the single highest-risk part of the project; validate it early.
-
-3. Pick your engine/tech stack
-For mobile pixel-art with this scope, realistic options:
-
-Unity — most common choice for mobile pixel games, huge asset/plugin ecosystem, easiest to hire help for later if needed
-Godot — free, increasingly popular for pixel art 2D, lighter weight, great if solo/small budget
-Custom (e.g., web-based/React Native) — only if you have strong programming background already; not recommended for a game this systems-heavy unless you're experienced
-
-Given the game's complexity (inventory, timers, gacha, base building), I'd lean Unity or Godot over anything custom-built.
-
-4. Since you can handle art — build a vertical slice
-One hideout, 3-5 resources, 1 craftable item, 1 assignable assassin, 1 commission type, 1 master. Fully playable loop, ugly but complete. This becomes your proof of concept and pitch tool if you ever want funding/collaborators.
-
-5. Systems architecture before content scaling
+B. Systems architecture before content scaling
 Before you make 20 masters or 50 assassins, build the data structure so adding more is just filling in spreadsheets, not rewriting code — item/character data as external files (JSON/ScriptableObjects), not hardcoded.
 
-6. Then, and only then: content, gacha, monetization, polish
+C. Then, and only then: content, gacha, monetization, polish
+
+---------------------------------------
 
 Okay, Unity then. Assign me a task what I need to do first
 
