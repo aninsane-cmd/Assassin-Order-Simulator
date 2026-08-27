@@ -9,6 +9,7 @@ Before you make 20 masters or 50 assassins, build the data structure so adding m
 C. Then, and only then: content, gacha, monetization, polish
 
 ---------------------------------------
+
 A. CORE LOOP
 1. Gather 
 2. Craft
@@ -24,8 +25,7 @@ Open Crafting Window will allows player to use collected material in the invento
 A.3 Build Buildings
 Player can craft hammer to build a building. In the build button, player can choose which blueprint they want to use. The player will place the blueprint in the open world. If the resources in the inventory sufficient, the blueprint will be replaced by the finished building. If the resources is insufficient, the blueprint will remain in the open world with displaying how much resources collected and how much that still needed. The player also have "move" option aside from build. They can move either blueprint or finished building in the open world. 
 
-Task 2: Build the tiniest possible loop (this week's goal)
-Don't build a game yet — build a system test. Your target:
+---------------------------------------
 
 One button: "Send Assassin to Gather Wood"
 Pressing it starts a 15-second timer (use seconds now, not minutes — faster to test)
