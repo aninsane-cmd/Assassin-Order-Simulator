@@ -43,7 +43,7 @@ MC (disabled royal in hiding) starts alone with one master, survives, builds a h
 Sovereign — the MC (hidden royal, clairvoyant, stationary/hidden leader). Commands the order without ever appearing directly.
 In-world epithet: "Eyes of the Mountain" — a whispered legend/rumor title used by others (NPCs, folklore, old texts), not a mechanical UI label. Echoes the historical "Old Man of the Mountain" (Sheikh al-Jabal) while naming the MC's actual clairvoyant power instead of just borrowing the original title wholesale.
  
-Master (replaces "Manager") — bound by life-contract, gacha-collectible, personal/active-mission characters. One on-duty at a time.
+Master (replaces "master") — bound by life-contract, gacha-collectible, personal/active-mission characters. One on-duty at a time.
 Reads clean in UI ("Recruit a new Master," "Your Master was knocked out").
 Historical root: maps to the Da'i (and senior Da'i al-Kabir) of the real Nizari Ismaili order — trusted, personally vetted field commanders operating with real autonomy one level below the hidden supreme leader.
  
@@ -110,3 +110,30 @@ Recap: What's confirmed for v1
 **Objective:** Execute the final commission against the town head.
 **Beat:** Resolution — the corrupt head is replaced by an ally of the assassin order. The area around the main castle becomes safe from authority detection. The MC's guild has its first real, permanent foothold, and the revenge quest against the wider dynasty properly begins.
 **End of V1:** Epilogue beat hinting at the larger conspiracy/dynasty (Book 2 hook) and possibly a tease of the first branch/zone to come.
+
+Chapter 1 — Exile (Detailed Draft)
+
+Opening state: MC wakes/arrives in the wilderness, disoriented, injured or freshly escaped. Blind, with a limp — establish this physically before anything else (movement is slow, screen/vision is limited or obscured to communicate blindness without frustrating the player). The loyal servant is already present — they didn't get separated, they fled together.
+
+Beat 1 — Establishing the bond (before any real gameplay)
+A short narrative/dialogue scene: the servant pledges to stay, the MC reveals (or the servant already knows) their identity. This is where the life-contract is formed — not as a menu/system explanation yet, just an emotional beat: "I bind you not as master to servant, but eyes to the blind, hands to the still." Keep the mechanical explanation (loyalty, permanence) light here; let it land as devotion first, mechanic second.
+
+Beat 2 — Teaching clairvoyance as the core "vision" mechanic
+Immediately after, let the player physically feel the MC's blindness/limp limitation, then introduce clairvoyance as the workaround — a limited-range "reveal" around the MC showing nearby resources/dangers, while anything outside that range is genuinely hidden until the servant (master) physically scouts it. This single moment teaches your whole dual-mode philosophy wordlessly: MC senses, master acts.
+
+Beat 3 — First gather/build loop (tutorial pacing)
+
+Direct the servant to gather wood (assign-and-wait, your idle dual-mode) or let the player control the servant personally for the first gather (active dual-mode) — I'd suggest starting with personal/active control for the very first action, since new players learn by doing, not delegating; introduce the assign option only after they understand the base action.
+Build the first hut — simple, minimal choices (maybe literally one placement decision) just to introduce the free-placement building system without overwhelming a brand-new player with the full scattered-open-world complexity yet.
+
+Beat 4 — First night / survival tension
+A small survival pressure beat (cold, hunger, or a distant danger glimpsed via clairvoyance) that justifies why the hut matters right now — gives the early loop stakes beyond "because the tutorial said so."
+
+Beat 5 — Chapter close / transition hook
+Hut is standing, first night survived. Close on a quiet, human moment between MC and servant (this is your best chance to make the player care about the relationship before the game opens up into systems) and a forward-look line — a rumor, a distant light, a sound — that seeds Chapter 2's "world beyond the forest" beat.
+
+Design notes to keep in mind for this chapter specifically:
+
+This is your one chapter where linearity is good. Every later chapter should open up freedom-based play; Chapter 1's job is purely to teach the core verbs (gather, build, dual-mode, clairvoyance) in a guided, low-choice way before Chapter 2 starts loosening the reins.
+Keep systems minimal on purpose — no commissions, no money, no roster yet. Just: move, gather, build, and the MC/master relationship. Every extra system here dilutes the emotional focus of "just the two of us against the world," which is your strongest opening hook.
+The blindness mechanic needs to feel meaningful, not gimmicky — worth deciding concretely how vision-limitation actually renders (fog outside clairvoyance range, muted/grayscale outside range with color inside, etc.) since this is a core identity feature of your MC, not just a stat.
