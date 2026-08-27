@@ -381,21 +381,25 @@ Name it ManagerMovement
 Double-click to open it in Visual Studio
 
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class ManagerMovement : MonoBehaviour
+public class MasterMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
 
     void Update()
     {
-        float moveX = Input.GetAxisRaw("Horizontal");
-        float moveY = Input.GetAxisRaw("Vertical");
+        Vector2 input = Vector2.zero;
 
-        Vector3 movement = new Vector3(moveX, moveY, 0f).normalized;
+        if (Keyboard.current != null)
+        {
+            if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) input.x -= 1;
+            if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed) input.x += 1;
+            if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) input.y += 1;
+            if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) input.y -= 1;
+        }
 
+        Vector3 movement = new Vector3(input.x, input.y, 0f).normalized;
         transform.position += movement * moveSpeed * Time.deltaTime;
     }
 }
-
-
-
