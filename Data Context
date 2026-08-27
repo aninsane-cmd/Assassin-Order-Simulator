@@ -21,3 +21,39 @@ Players can build anywhere on the map (like hunting lodges in Medieval Dynasty),
 
 Retention Philosophy
 Explicitly not chasing daily-quest-driven login habits. Instead aiming for "I belong there" motivation — a persistent, living world worth checking on (ambient changes, visible ownership/growth, character moments) rather than reward-gated tasks. Scoped as an indie project: "good enough" for solid monetization and experience, not competing with AAA live-service retention systems.
+
+Freedom-Driven Emergent Gameplay
+Open-ended systems naturally produce funny/emergent player stories — a "master assassin guild" that's secretly a farm, attachment/jokes around specific masters, deliberately bad base placements as challenge runs, solo/minimalist playstyles. This works because narratively "serious" characters (bound-by-contract operatives) have total mechanical freedom to be redirected — the gap between intended and player-chosen role is the comedy.
+ 
+Alchemy, Seed Exploration, Smithing
+Alchemy (unknown-recipe herb crafting) and seed exploration (personal master forest exploration, plant-to-reveal) were discussed as deep optional systems tied to the farmer identity. Smithing (tool tiers gating efficiency, 2048-style weapon merge-crafting) was recommended as the one deep system to fully build for v1, with alchemy/seed-exploration deferred to post-launch.
+ 
+Money & Black Market Economy
+Money is a universal-but-imperfect equalizer — anything can be bought, but the market buys cheap/sells expensive, and rare purchases carry detection risk tied to the concealment/authority theme. Risk consequence: master imprisonment. Refined into a heat/suspicion meter (systemic, not per-purchase gambling) rather than flat dice rolls.
+ 
+Master Economic Specialization (Gacha Hook)
+Black-market price/risk bonuses gated behind master skills obtainable via gacha, giving SSR (or scaled R/SR/SSR) masters value as economic specialists — a new gacha-pull axis beyond combat, reinforcing "different identities, all viable."
+ 
+V1 Scope Definition
+Decided v1 should include all core systems except the branch/patch system, sequenced naturally through the story: survival start → hut → hideout → recruiting → minor commissions → growing guild → climax commission. Specifically excavation/mining, farming, and smithing (capped at mid-tier) are v1 systems; alchemy/poison is explicitly deferred to the branch/patch system, not launch.
+ 
+V1 Story Arc
+MC (disabled royal in hiding) starts alone with one master, survives, builds a hut → hideout, recruits assassins, takes minor commissions against commoner targets, escalating to a climax commission: assassinating a corrupt town/village head with a dangerous agenda to destroy the town. Ending: the head is replaced with an ally of the assassin order, making the main castle's surrounding area safe from authority detection going forward — a satisfying resolution that also sets up branches as where risk/tension re-escalates in new zones.
+ 
+Climax Item: The Obsidian Blade
+The climax commission requires an obsidian blade, obtainable through two (now three) paths:
+1. Craft it — via committed mining + smithing investment (mid-tier crafting payoff)
+2. Buy it — attempting this on the black market fails: the seller refuses and reports the player, resulting in the manager being detained (not just risked) — a scripted betrayal beat that punishes trying to "buy your way out," consistent with the story's theme of corrupt shortcuts. but player can buy the resources to craft the blade.
+3. Broker it via diplomacy — training/using a high-skill (ideally SSR) diplomat master allows successfully negotiating the purchase instead, giving money/social-focused players a legitimate third path without being forced into crafting
+ 
+This makes the climax a genuine convergence point: every playstyle needs some real investment (crafting mastery or diplomatic mastery) to succeed, rather than money alone trivializing the final challenge — preserving the "money can't solve everything" rule at the moment it matters most.
+ 
+Recap: What's confirmed for v1
+- Core survival/building loop (hut → hideout → castle, free placement)
+- Excavation/mining (dual-mode: personal master vs. assigned assassin)
+- Farming (basic resources; seed exploration optional/discovery-based, without alchemy ties yet)
+- Smithing + 2048-style weapon merge-crafting (capped at mid-tier, with obsidian as a special climax-tier exception)
+- Money & black market economy, including heat/suspicion risk and master imprisonment consequence
+- Master gacha system, including at least one economic-specialist (negotiation/diplomacy) skill line
+- Full story arc from solo survival through the corrupt town head climax
+- Explicitly excluded from v1: alchemy/poison crafting, branch/patch zones — both reserved for post-launch content
