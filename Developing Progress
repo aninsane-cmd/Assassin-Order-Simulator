@@ -399,10 +399,158 @@ public class MasterMovement : MonoBehaviour
             if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) input.y -= 1;
         }
 
+----------------------------------
+
 2. Add a resource node to the world
 
 Create a new sprite (2D Object → Sprites → Square works as placeholder), rename it StickNode, give it a distinct color (brown), place it somewhere away from the master's spawn point
 Add a Collider2D (set to "Is Trigger") so the master can detect proximity without physically blocking it
+
+    2.1 Create the node GameObject in Unity
+    Right-click in Hierarchy → 2D Object → Sprites → Square
+    Rename it to StickNode
+    Set Scale to something small like X: 0.4, Y: 0.4, Z: 1
+    Change its Color (Sprite Renderer) to brown so it reads as "stick pile"
+    Move it away from the master's spawn point (e.g. Position X: 3, Y: 2, Z: 0)
+    In the Inspector, click Add Component → search Circle Collider 2D (or Box) → add it
+    In that collider component, check Is Trigger ✅ — this lets the master overlap it without physically bumping into it
+
+    2.2 Make sure the master can detect triggers
+    Trigger events need a Rigidbody2D on at least one of the two colliding objects. Since the node is static, put it on the master:
+    Click on master in the Hierarchy
+    Add Component → Rigidbody2D
+    Set Body Type to Kinematic (you're moving it via transform.position, not physics forces, so you don't want gravity/physics pushing it around)
+    Add Component → Circle Collider 2D (leave "Is Trigger" unchecked on this one — one trigger + one normal collider in the pair is enough)
+
+    2.3 Write the ResourceNode script
+    This lives on the node itself and knows what it gives and how it depletes/respawns.
+    Create Scripts/ResourceNode.cs
+
+        using UnityEngine;
+        
+        public class ResourceNode : MonoBehaviour
+        {
+            public string resourceName = "Stick";
+            public int amount = 1;
+            public float respawnTime = 10f;
+        
+            private SpriteRenderer sr;
+            private Collider2D col;
+            private bool isDepleted = false;
+        
+            void Awake()
+            {
+                sr = GetComponent<SpriteRenderer>();
+                col = GetComponent<Collider2D>();
+            }
+        
+            public void Gather()
+            {
+                if (isDepleted) return;
+        
+                Guildmaster.Instance.AddResource(resourceName, amount);
+                Deplete();
+            }
+        
+            void Deplete()
+            {
+                isDepleted = true;
+                sr.enabled = false;
+                col.enabled = false;
+                Invoke(nameof(Respawn), respawnTime);
+            }
+        
+            void Respawn()
+            {
+                isDepleted = false;
+                sr.enabled = true;
+                col.enabled = true;
+            }
+        }
+
+    Attach this to StickNode in the Inspector (Add Component → Resource Node). You'll see Resource Name, Amount, Respawn Time fields 
+    — leave defaults or set Amount to 1, Respawn Time to 10.
+
+    2.4 Add a singleton + AddResource to Guildmaster
+    Your gather-node script needs a way to reach the inventory without you dragging references everywhere. Add a static Instance to Guildmaster.cs
+
+        public static Guildmaster Instance;
+        
+        void Awake()
+        {
+            Instance = this;
+        }
+
+    Add this method anywhere in the class:
+
+        public void AddResource(string name, int amount)
+        {
+            if (!inventory.ContainsKey(name)) inventory[name] = 0;
+            inventory[name] += amount;
+            UpdateInventoryDisplay();
+        }
+
+    Since you'll now have resources that weren't hardcoded at Start() (like "Stick" from a node before you ever pressed a gather button), 
+    update UpdateInventoryDisplay() to loop the dictionary dynamically instead of hardcoding each resource line:
+
+        void UpdateInventoryDisplay()
+        {
+            string display = "";
+            foreach (var kvp in inventory)
+            {
+                display += kvp.Key + ": " + kvp.Value + "\n";
+            }
+            inventoryText.text = display;
+        }
+
+    2.5 Detect range + interact key
+    Create Scripts/GatherInteraction.cs and attach it to master:
+
+        using UnityEngine;
+        using UnityEngine.InputSystem;
+        using System.Collections.Generic;
+        
+        public class GatherInteraction : MonoBehaviour
+        {
+            private List<ResourceNode> nodesInRange = new List<ResourceNode>();
+        
+            void Update()
+            {
+                if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+                {
+                    if (nodesInRange.Count > 0)
+                    {
+                        nodesInRange[0].Gather();
+                    }
+                }
+            }
+        
+            void OnTriggerEnter2D(Collider2D other)
+            {
+                ResourceNode node = other.GetComponent<ResourceNode>();
+                if (node != null) nodesInRange.Add(node);
+            }
+        
+            void OnTriggerExit2D(Collider2D other)
+            {
+                ResourceNode node = other.GetComponent<ResourceNode>();
+                if (node != null) nodesInRange.Remove(node);
+            }
+        }
+
+    2.6 Test
+    Walk the master into StickNode's collider radius
+    Press E
+    Node should vanish, InventoryText should update to show Stick: 1
+    Wait 10 seconds — node should reappear
+
+    If it doesn't fire: check the Console for errors first, then double check both the node's collider has "Is Trigger" checked and the master has a Rigidbody2D set to Kinematic 
+    — that's the #1 cause of trigger events silently not firing in Unity.
+
+    Once this works, duplicating StickNode into StoneNode / FruitNode is just: duplicate the object, change color, change Resource Name and Amount in the Inspector 
+    — zero new code, same payoff as your Dictionary-based inventory decision earlier.
+
+-----------------------------------
 
 3. Detect when master is near a node
 
