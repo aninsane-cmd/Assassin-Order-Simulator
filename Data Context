@@ -139,13 +139,47 @@ Keep systems minimal on purpose — no commissions, no money, no roster yet. Jus
 The blindness mechanic needs to feel meaningful, not gimmicky — worth deciding concretely how vision-limitation actually renders (fog outside clairvoyance range, muted/grayscale outside range with color inside, etc.) since this is a core identity feature of your MC, not just a stat.
 
 Gameplay Mechanics for V1
-Skip the beat1 because it's intro story. But the beat2 has actual gameplay mechanic. So, the manager will always explore the map on the fog, unless they active 'beacon' that will lit all the fog. Like genshin archon statue that will reveals all the map. This beacon is a shrine that have synergy with the MC clairvoyance ability.
-The beacon need fire to lit it. The manager can lit it everytime the limit reached, send assassin to lit it, or build a base there that will make the shrine will lit automatically as long as the resources to make fire exist.
-Resources to lit: wooden torch, iron torch, oil lantern etc. each with different lasting fire and resources to make. As well as the lighting zone effect. If the fire runs out the zone become foggy again like it was before. It also slows down the manager or assassin that cross the zone. The shrine doesn't have authority detection effect because the shrine doesn't tied up with the assassin order. Building or outpost that being build inside the shrine safe zone also safe from detection
+Skip the beat1 because it's intro story. But the beat2 has actual gameplay mechanic. So, the master will always explore the map on the fog, unless they active 'beacon' that will lit all the fog. Like genshin archon statue that will reveals all the map. This beacon is a shrine that have synergy with the MC clairvoyance ability.
+The beacon need fire to lit it. The master can lit it everytime the limit reached, send assassin to lit it, or build a base there that will make the shrine will lit automatically as long as the resources to make fire exist.
+Resources to lit: wooden torch, iron torch, oil lantern etc. each with different lasting fire and resources to make. As well as the lighting zone effect. If the fire runs out the zone become foggy again like it was before. It also slows down the master or assassin that cross the zone. The shrine doesn't have authority detection effect because the shrine doesn't tied up with the assassin order. Building or outpost that being build inside the shrine safe zone also safe from detection
 back to beat 2. the tutorial will requires player to craft torch as the first thing they need with resouces stick and stone. the iron torch and lantern is locked in this stage, will unlock later on. the lit zone is minimal, and the running time for the torch is one day. the player actually start quite near the spawn point.
 the player will have to explore and survive. the player doesn't have to lit the shrine though. it is freedom based. they can lit it or don't. but sooner or later the player will recognize that it is mandatory.
-the player have to survive, which mean to secure three things before their health run out (manager and MC need food and water for basic need. hunger or thrist bar will decrease HP if runs out). This three things is water, food, and camp. camp will provide safe zone to sleep over the night or prevent animal or monster attack. if HP runs out, in the tutorial chapter the manager and the MC will start again from spawn point, erasing their previous progress before check point. the chech point or when tutorial ended is when the MC meet the new manager. after the tutorial, the normal gameplay, consequence of HP drop to zero is manager knocked out. this point, MC already acquire new manager, so the knocked out manager can still be changed with the new one. but if all the manager knocked out, the progress will restart from the last checkpoint.
-player is actually stays in place, the manager is the one who actually we play. the manager will actively looking for basic resouces in the surrounding forest: stick, stone, unkown seed, fruit.
-MC have skill that can reveals all item resources and hidden item around the manager. but this skill have cooldown. this will aid exploration. the crafting system is what the manager did. things the  manager can craft is knife, axe, hammer, campfire, torch, trap.
+the player have to survive, which mean to secure three things before their health run out (master and MC need food and water for basic need. hunger or thrist bar will decrease HP if runs out). This three things is water, food, and camp. camp will provide safe zone to sleep over the night or prevent animal or monster attack. if HP runs out, in the tutorial chapter the master and the MC will start again from spawn point, erasing their previous progress before check point. the chech point or when tutorial ended is when the MC meet the new master. after the tutorial, the normal gameplay, consequence of HP drop to zero is master knocked out. this point, MC already acquire new master, so the knocked out master can still be changed with the new one. but if all the master knocked out, the progress will restart from the last checkpoint.
+player is actually stays in place, the master is the one who actually we play. the master will actively looking for basic resouces in the surrounding forest: stick, stone, unkown seed, fruit.
+MC have skill that can reveals all item resources and hidden item around the master. but this skill have cooldown. this will aid exploration. the crafting system is what the master did. things the  master can craft is knife, axe, hammer, campfire, torch, trap.
 
-
+**Control structure:**
+- **MC is stationary** at a fixed camp location — cannot move, consistent with blindness/limp. Acts as a home-base anchor point, both narratively and mechanically.
+- **master is the actual player-controlled character** — the player explores, gathers, and interacts with the world through the master, not the MC. This makes the "eyes, ears, hands" premise literal in gameplay terms.
+ 
+**MC's clairvoyance (as it applies here):**
+- Centered on the MC's fixed position, revealing a limited static radius around camp (not following the master)
+- **Active reveal skill:** the MC can reveal all resources and hidden items around the *master's* current location on demand, aiding exploration — but this has a **cooldown**, preventing it from trivializing exploration. Likely resource/item-focused only (not danger-detection), keeping the ability's identity specific and leaving hazard-awareness to the player.
+ 
+**Exploration loop:**
+- master ventures out from camp into the surrounding forest to gather **stick, stone, unknown seed, and fruit**
+- Implicit risk/reward tension: the farther the master wanders, the riskier/longer the return trip, especially since the MC is alone and stationary at camp during this time (MC's passive vulnerability while alone — still open question)
+- No hard leash/range limit intended — risk should scale softly with distance, not a hard wall, consistent with the game's freedom-first philosophy
+ 
+**Crafting (performed by the master):**
+- Craftable items: **knife, axe, hammer, campfire, torch, trap**
+- Axe ties into tool-tiered gathering efficiency (established earlier as a core system)
+- Campfire ties into the survival triad (see below)
+- Torch is specifically the shrine-lighting item
+- Trap is a new addition — likely passive food gathering and/or camp defense while the master is away (open question)
+- First tool(s) should be craftable directly from raw stick + stone with no prerequisite, to avoid a bootstrapping problem in the tutorial's opening minutes
+ 
+**Survival triad (introduced in Chapter 1):**
+- **Water, food, and camp** are the three basic needs for both MC and master
+- Hunger/thirst bars decrease HP if left unmet; camp provides a safe zone for sleeping and protection from animals/monsters
+- **Tutorial-specific failure state:** if HP hits zero, MC and master restart from the spawn point, losing progress made since the start of the chapter (low-stakes, since nothing valuable exists yet to lose)
+- **Checkpoint:** the moment the MC acquires a second master marks the tutorial's checkpoint/end
+- **Post-tutorial failure state changes:** HP reaching zero knocks a master out temporarily (not permanent loss), and since the MC now has more than one master, a knocked-out master can simply be swapped for another. Total roster knockout (all masters down) triggers a restart from the last checkpoint instead of permadeath
+ 
+**Shrine/Beacon system (discovered via exploration):**
+- A **shrine** exists near the spawn point, tied narratively to the MC's clairvoyant gift (not the assassin order) — meaning it carries **no authority-detection risk**
+- Lighting it requires **fire**, starting with a **wooden torch** (crafted from stick + stone) in Chapter 1; iron torch and oil lantern are higher tiers, locked until later chapters
+- Lighting the shrine reveals a **minimal fog-cleared radius** around it; the torch burns for **one in-game day** before going dark again, at which point the fog returns and crossing the zone becomes slower
+- Lighting the shrine is entirely **optional** — not forced by the tutorial — with the intent that players will naturally discover its value (visibility, safer/faster movement, safe building) through experience rather than instruction
+- **Buildings placed within a lit shrine's radius are automatically safe from authority detection**, since the shrine is understood in-world as unconnected to the assassin guild
+- Beacon maintenance scales with investment: manually relighting via master (active), assigning an assassin to relight (idle, post-tutorial), or building a base at the shrine with sustained fuel supply for automatic lighting (long-term investment)
