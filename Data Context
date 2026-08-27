@@ -39,11 +39,18 @@ Decided v1 should include all core systems except the branch/patch system, seque
  
 V1 Story Arc
 MC (disabled royal in hiding) starts alone with one master, survives, builds a hut → hideout, recruits assassins, takes minor commissions against commoner targets, escalating to a climax commission: assassinating a corrupt town/village head with a dangerous agenda to destroy the town. Ending: the head is replaced with an ally of the assassin order, making the main castle's surrounding area safe from authority detection going forward — a satisfying resolution that also sets up branches as where risk/tension re-escalates in new zones.
+
+Sovereign — the MC (hidden royal, clairvoyant, stationary/hidden leader). Commands the order without ever appearing directly.
+In-world epithet: "Eyes of the Mountain" — a whispered legend/rumor title used by others (NPCs, folklore, old texts), not a mechanical UI label. Echoes the historical "Old Man of the Mountain" (Sheikh al-Jabal) while naming the MC's actual clairvoyant power instead of just borrowing the original title wholesale.
+ 
+Master (replaces "Manager") — bound by life-contract, gacha-collectible, personal/active-mission characters. One on-duty at a time.
+Reads clean in UI ("Recruit a new Master," "Your Master was knocked out").
+Historical root: maps to the Da'i (and senior Da'i al-Kabir) of the real Nizari Ismaili order — trusted, personally vetted field commanders operating with real autonomy one level below the hidden supreme leader.
  
 Climax Item: The Obsidian Blade
 The climax commission requires an obsidian blade, obtainable through two (now three) paths:
 1. Craft it — via committed mining + smithing investment (mid-tier crafting payoff)
-2. Buy it — attempting this on the black market fails: the seller refuses and reports the player, resulting in the manager being detained (not just risked) — a scripted betrayal beat that punishes trying to "buy your way out," consistent with the story's theme of corrupt shortcuts. but player can buy the resources to craft the blade.
+2. Buy it — attempting this on the black market fails: the seller refuses and reports the player, resulting in the master being detained (not just risked) — a scripted betrayal beat that punishes trying to "buy your way out," consistent with the story's theme of corrupt shortcuts. but player can buy the resources to craft the blade.
 3. Broker it via diplomacy — training/using a high-skill (ideally SSR) diplomat master allows successfully negotiating the purchase instead, giving money/social-focused players a legitimate third path without being forced into crafting
  
 This makes the climax a genuine convergence point: every playstyle needs some real investment (crafting mastery or diplomatic mastery) to succeed, rather than money alone trivializing the final challenge — preserving the "money can't solve everything" rule at the moment it matters most.
@@ -57,3 +64,49 @@ Recap: What's confirmed for v1
 - Master gacha system, including at least one economic-specialist (negotiation/diplomacy) skill line
 - Full story arc from solo survival through the corrupt town head climax
 - Explicitly excluded from v1: alchemy/poison crafting, branch/patch zones — both reserved for post-launch content
+
+## V1 Main Quest Draft
+ 
+### **Chapter 1 — Exile**
+**Story:** The MC (disabled crown prince/princess) survives a coup, fleeing into the wilderness with one loyal servant. Blind, with a limp, but carrying a hidden divine gift — clairvoyant sight within limited range.
+**Objective:** Survive the first days — build a hut, gather basic resources.
+**Systems unlocked:** Basic gathering (wood/food), basic building (hut), intro to dual-mode (servant does the physical gathering; MC's clairvoyance "sees" nearby resources/danger).
+**Beat:** The servant is bound as the MC's first master via life-contract — the game teaches what this bond means narratively (loyalty, "eyes/ears/hands").
+ 
+### **Chapter 2 — Foundation**
+**Story:** Hut becomes the seed of a hideout. The MC resolves to rebuild in secret and begin their revenge.
+**Objective:** Expand hut into a basic hideout; establish first resource loops.
+**Systems unlocked:** Free-placement building expands, mining/excavation introduced, farming introduced (including optional seed exploration), basic smithing (tools gate efficiency — e.g., need an axe to chop faster).
+**Beat:** First hints of the world beyond the forest — rumors of a corrupt town nearby, players get their first sense of the political landscape.
+ 
+### **Chapter 3 — First Blood**
+**Story:** The guild needs funding and purpose. The MC authorizes their first assassination contracts — small, personal, against commoners (though "commoner" targets subtly seed the larger conspiracy).
+**Objective:** Recruit a second master (first gacha pull moment), accept and complete minor commissions.
+**Systems unlocked:** Full assassin roster/recruitment, commission system (assign vs. personal dual-mode missions), money economy introduced (commission payouts, basic buying).
+**Beat:** A completed commission reveals a clue connecting the target to the town head's agenda — first thread of the main conspiracy.
+ 
+### **Chapter 4 — The Guild Grows**
+**Story:** Reputation spreads quietly. More recruits arrive, resource needs scale up.
+**Objective:** Grow roster, expand hideout into a proper base, unlock mid-tier smithing (merge-crafting weapons).
+**Systems unlocked:** Full merge-crafting mechanic, black market access (buy/sell, heat/suspicion meter introduced), master economic specialization skills become relevant.
+**Beat:** Clues accumulate — the town head isn't just corrupt, but actively planning something that endangers the whole town (smuggling disasters, sabotage, or a deliberate famine/fire — pick one as the concrete "dangerous agenda").
+ 
+### **Chapter 5 — The Net Tightens**
+**Story:** The conspiracy comes into full view. The MC learns the scope of the town head's plan and the timeline before it's too late.
+**Objective:** Gather intelligence, complete escalating commissions against the town head's key allies/protectors (bodyguards, corrupt officials, informants).
+**Systems unlocked:** Higher-tier commissions, full black market risk stakes (a failed/risky purchase could cost a master here as real tension-building before the climax).
+**Beat:** A master may be lost to imprisonment here (or narrowly avoided) — a good place for a rescue-mission side-beat if you want it, raising emotional stakes before the finale.
+ 
+### **Chapter 6 — The Obsidian Path**
+**Story:** The final commission is authorized: assassinate the town head before their plan executes. But the weapon required — the obsidian blade — isn't something ordinary steel can replace.
+**Objective:** Player must, through whichever playstyle they've built, obtain the obsidian blade:
+ - **Craft it** (mining + smithing mastery), or
+ - **Broker it** (diplomat master negotiates the purchase), or
+ - **Attempt to buy it outright** and fail (seller refuses, reports the master — detained, forcing the player onto one of the other two paths)
+**Systems converge here:** every major system built over the game (mining, smithing, economy, master specialization) funnels into this single required moment.
+ 
+### **Chapter 7 — The Reckoning**
+**Story:** With the obsidian blade obtained, the MC (via chosen master, personal active mission) completes the climax assassination.
+**Objective:** Execute the final commission against the town head.
+**Beat:** Resolution — the corrupt head is replaced by an ally of the assassin order. The area around the main castle becomes safe from authority detection. The MC's guild has its first real, permanent foothold, and the revenge quest against the wider dynasty properly begins.
+**End of V1:** Epilogue beat hinting at the larger conspiracy/dynasty (Book 2 hook) and possibly a tease of the first branch/zone to come.
