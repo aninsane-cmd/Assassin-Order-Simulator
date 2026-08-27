@@ -1,7 +1,7 @@
-I want to create a mobile game, open world pixel style, with simulator crafting and building game about assassin guild manager. This manager's role is as a leader, started from scratch gathering materials to build hideout, recruit assassin, accepting commission, crafting weapon, poison, maintaining food supply with gathering or farming, until he can build assassin castle, recruit legendary assassin, and accepting commission that can change the course of history. The details can be discussed later. If I want to build this game from the scratch, what I need to do first?
+I want to create a mobile game, open world pixel style, with simulator crafting and building game about assassin guild master. This master's role is as a leader, started from scratch gathering materials to build hideout, recruit assassin, accepting commission, crafting weapon, poison, maintaining food supply with gathering or farming, until he can build assassin castle, recruit legendary assassin, and accepting commission that can change the course of history. The details can be discussed later. If I want to build this game from the scratch, what I need to do first?
 
 1. Lock a one-page design pillar doc (not a full GDD yet)
-Just the core loop, the "manager can do it or delegate" pillar, and your 3-5 non-negotiable features. This keeps you from scope-creeping while you build.
+Just the core loop, the "master can do it or delegate" pillar, and your 3-5 non-negotiable features. This keeps you from scope-creeping while you build.
 
 2. Build the core loop first, ugly and small
 Before art, before content — prototype the systems: gather resource → craft item → assign assassin → timer → collect result. If this loop isn't satisfying with placeholder squares, no amount of pixel art will save it. This is the single highest-risk part of the project; validate it early.
@@ -16,10 +16,10 @@ Custom (e.g., web-based/React Native) — only if you have strong programming ba
 Given the game's complexity (inventory, timers, gacha, base building), I'd lean Unity or Godot over anything custom-built.
 
 4. Since you can handle art — build a vertical slice
-One hideout, 3-5 resources, 1 craftable item, 1 assignable assassin, 1 commission type, 1 manager. Fully playable loop, ugly but complete. This becomes your proof of concept and pitch tool if you ever want funding/collaborators.
+One hideout, 3-5 resources, 1 craftable item, 1 assignable assassin, 1 commission type, 1 master. Fully playable loop, ugly but complete. This becomes your proof of concept and pitch tool if you ever want funding/collaborators.
 
 5. Systems architecture before content scaling
-Before you make 20 managers or 50 assassins, build the data structure so adding more is just filling in spreadsheets, not rewriting code — item/character data as external files (JSON/ScriptableObjects), not hardcoded.
+Before you make 20 masters or 50 assassins, build the data structure so adding more is just filling in spreadsheets, not rewriting code — item/character data as external files (JSON/ScriptableObjects), not hardcoded.
 
 6. Then, and only then: content, gacha, monetization, polish
 
@@ -44,7 +44,7 @@ That's it. No art, no assassin sprite, just buttons and numbers.
 Step 1: Download Unity Hub
 
 Go to unity.com/download
-Click "Download for Windows" — this installs Unity Hub, not Unity itself (Hub is the manager app you'll use to install/update engine versions and open projects)
+Click "Download for Windows" — this installs Unity Hub, not Unity itself (Hub is the master app you'll use to install/update engine versions and open projects)
 Run the installer, accept defaults
 
 Step 2: Create your free Unity account
@@ -63,7 +63,7 @@ Step 4: Create your first project
 
 Go to the "Projects" tab in Unity Hub → "New Project"
 Select the "2D (Core)" or "2D (URP)" template — either works, 2D Core is simpler for now
-Name it something like AssassinGuildManager, pick a save location, click Create
+Name it something like AssassinGuildmaster, pick a save location, click Create
 
 Step 5: Verify it works
 
@@ -102,13 +102,13 @@ In the Project panel (bottom-left), right-click inside the Assets folder (empty 
 Go to Create → Folder, name it Scripts
 Double-click into that new Scripts folder
 Right-click inside it → Create → C# Script
-Name it exactly GuildManager (matching names matters in Unity — the file name must match the class name inside it)
+Name it exactly Guildmaster (matching names matters in Unity — the file name must match the class name inside it)
 
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class GuildManager : MonoBehaviour
+public class Guildmaster : MonoBehaviour
 {
     public TMP_Text timerText;
     public TMP_Text woodCountText;
@@ -170,9 +170,9 @@ Step 1: Attach the script to an object
 
 Back in Unity, click on Canvas in the Hierarchy (we'll attach the script here since it's convenient, though technically it could go on any object)
 In the Inspector panel (right side), scroll to the bottom and click "Add Component"
-Type GuildManager in the search box that appears, and click on it when it shows up in the list
+Type Guildmaster in the search box that appears, and click on it when it shows up in the list
 
-You should now see a "Guild Manager (Script)" section in the Inspector with three empty fields: Timer Text, Wood Count Text, and Gather Wood Button.
+You should now see a "Guild master (Script)" section in the Inspector with three empty fields: Timer Text, Wood Count Text, and Gather Wood Button.
 
 Step 2: Wire up the fields (drag and drop)
 Now we connect the actual UI objects to those empty slots:
@@ -220,7 +220,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 
-public class GuildManager : MonoBehaviour
+public class Guildmaster : MonoBehaviour
 {
     public TMP_Text timerText;
     public TMP_Text inventoryText;
@@ -296,8 +296,8 @@ public class GuildManager : MonoBehaviour
 Step 1: Check the Inspector
 
 Go back to Unity
-Click on Canvas in the Hierarchy (that's where the GuildManager script lives)
-Look at the Inspector — since we added two new public fields (Inventory Text and Gather Stone Button), you should now see five fields total in the Guild Manager component: Timer Text, Inventory Text, Gather Wood Button, Gather Stone Button
+Click on Canvas in the Hierarchy (that's where the Guildmaster script lives)
+Look at the Inspector — since we added two new public fields (Inventory Text and Gather Stone Button), you should now see five fields total in the Guild master component: Timer Text, Inventory Text, Gather Wood Button, Gather Stone Button
 
 Wait — first check: did the script recompile without errors? Look at the Console tab — if there's no red text, you're good. If there is, screenshot it.
 
@@ -307,7 +307,7 @@ Assuming no errors:
 Notice Wood Count Text field is probably now labeled Inventory Text (matching our script's variable name) — but it might show "None" now since the variable name changed. Drag your InventoryText object from the Hierarchy onto it.
 Drag GatherStoneButton from the Hierarchy onto the new Gather Stone Button field
 
-1. In the script (GuildManager.cs), find-and-replace these specific lines:
+1. In the script (Guildmaster.cs), find-and-replace these specific lines:
 
 inventory["Wood"] = 0; → inventory["Stick"] = 0;
 StartGathering("Wood", 10, 15f) → StartGathering("Stick", 10, 15f)
@@ -322,20 +322,20 @@ Its child Text (TMP) → change display text from "Gather Wood" to "Gather Stick
 
 3. Nothing else changes — the Dictionary-based inventory system doesn't care what you name resources, that's the whole point of building it this way. Adding "Seed" or "Fruit" later will follow this exact same pattern.
 
-my tutorial gameplay is where manager gather the resources like stick and stone manually. i know how to set up the core time or resource loop, but how to do manual collection?
+my tutorial gameplay is where master gather the resources like stick and stone manually. i know how to set up the core time or resource loop, but how to do manual collection?
 
 What you have now = the "assign it to someone" mode (menu-based, timer-driven, no movement).
-What you're asking about = the "do it yourself" mode — your manager physically walks around the game world, approaches a resource (a tree, a rock), and interacts with it directly. Per your tutorial doc, this is the actual Chapter 1 gameplay: the manager explores the forest and gathers stick/stone/seed/fruit in real time.
+What you're asking about = the "do it yourself" mode — your master physically walks around the game world, approaches a resource (a tree, a rock), and interacts with it directly. Per your tutorial doc, this is the actual Chapter 1 gameplay: the master explores the forest and gathers stick/stone/seed/fruit in real time.
 
 This needs three new pieces we haven't built yet:
 
 A game world to walk around in (currently you just have UI floating on a blank background — no actual "world")
-A player-controlled character (the manager) that moves via input (arrow keys/WASD for now; touch controls come later for mobile)
-Resource nodes placed in that world (a tree, a rock) that the manager can walk up to and interact with to collect
+A player-controlled character (the master) that moves via input (arrow keys/WASD for now; touch controls come later for mobile)
+Resource nodes placed in that world (a tree, a rock) that the master can walk up to and interact with to collect
 
 This is a meaningfully bigger step than what we've done so far, so let's take it one piece at a time.
 
-First: let's create the world and a movable manager character.
+First: let's create the world and a movable master character.
 
 Step 1 — Create a background/ground
 
@@ -344,10 +344,10 @@ Rename it to Ground
 In the Inspector, under Transform, set Scale to X: 20, Y: 20, Z: 1 (makes it a big flat ground area)
 Under the Sprite Renderer component, change the Color to a green-ish tone (click the color swatch) so it visually reads as "grass/ground" for now
 
-Step 2 — Create the manager character (placeholder)
+Step 2 — Create the master character (placeholder)
 
 Right-click in Hierarchy → 2D Object → Sprites → Square again
-Rename it to Manager
+Rename it to master
 Set its Scale to something small like X: 0.5, Y: 0.5, Z: 1 so it looks like a character standing on the ground, not the ground itself
 Change its color (e.g., blue) so it's visually distinct from the Ground
 
@@ -358,26 +358,26 @@ Rename it to Ground
 In the Inspector (Transform section), set Scale to X: 20, Y: 20, Z: 1
 Under Sprite Renderer component, click the Color swatch and pick a green tone (placeholder for grass)
 
-Step 2 — Create the manager character
+Step 2 — Create the master character
 
 Right-click in Hierarchy → 2D Object → Sprites → Square
-Rename it to Manager
+Rename it to master
 Set its Scale to X: 0.5, Y: 0.5, Z: 1
 Change its color to something distinct (e.g., blue)
 Make sure its Position is 0, 0, 0 (or close to it) so it's sitting visibly on the Ground
 
 Step 3 — Adjust the camera
-Since we now have an actual world instead of just floating UI, click on Main Camera in the Hierarchy and check its Position — it should be something like 0, 0, -10 (default) so it's looking down at the origin where your Ground and Manager are sitting.
+Since we now have an actual world instead of just floating UI, click on Main Camera in the Hierarchy and check its Position — it should be something like 0, 0, -10 (default) so it's looking down at the origin where your Ground and master are sitting.
 
-Good setup — Ground (green) and Manager (blue square) are both placed correctly, and the Main Camera position is already correct at 0, 0, -10.
+Good setup — Ground (green) and master (blue square) are both placed correctly, and the Main Camera position is already correct at 0, 0, -10.
 
-Now let's make the Manager move.
+Now let's make the master move.
 
 Step 1: Create a new script for movement
 
 In the Project panel, go into your Scripts folder
 Right-click → Create → MonoBehaviour Script
-Name it ManagerMovement
+Name it masterMovement
 Double-click to open it in Visual Studio
 
 using UnityEngine;
