@@ -349,7 +349,7 @@ Step 2 — Create the master character (placeholder)
 Right-click in Hierarchy → 2D Object → Sprites → Square again
 Rename it to master
 Set its Scale to something small like X: 0.5, Y: 0.5, Z: 1 so it looks like a character standing on the ground, not the ground itself
-Change its color (e.g., blue) so it's visually distinct from the Ground
+Change its color (e.g., red) so it's visually distinct from the Ground
 
 Step 1 — Create the ground
 
@@ -363,13 +363,13 @@ Step 2 — Create the master character
 Right-click in Hierarchy → 2D Object → Sprites → Square
 Rename it to master
 Set its Scale to X: 0.5, Y: 0.5, Z: 1
-Change its color to something distinct (e.g., blue)
+Change its color to something distinct (e.g., red)
 Make sure its Position is 0, 0, 0 (or close to it) so it's sitting visibly on the Ground
 
 Step 3 — Adjust the camera
 Since we now have an actual world instead of just floating UI, click on Main Camera in the Hierarchy and check its Position — it should be something like 0, 0, -10 (default) so it's looking down at the origin where your Ground and master are sitting.
 
-Good setup — Ground (green) and master (blue square) are both placed correctly, and the Main Camera position is already correct at 0, 0, -10.
+Good setup — Ground (green) and master (red square) are both placed correctly, and the Main Camera position is already correct at 0, 0, -10.
 
 Now let's make the master move.
 
