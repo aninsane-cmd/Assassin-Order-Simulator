@@ -412,7 +412,7 @@ Add a Collider2D (set to "Is Trigger") so the master can detect proximity withou
     Set Scale to something small like X: 0.4, Y: 0.4, Z: 1
     Change its Color (Sprite Renderer) to brown so it reads as "stick pile"
     Move it away from the master's spawn point (e.g. Position X: 3, Y: 2, Z: 0)
-    In the Inspector, click Add Component → search Circle Collider 2D (or Box) → add it
+    In the Inspector, click Add Component → search Box Collider 2D → add it
     In that collider component, check Is Trigger ✅ — this lets the master overlap it without physically bumping into it
 
     2.2 Make sure the master can detect triggers
@@ -420,7 +420,7 @@ Add a Collider2D (set to "Is Trigger") so the master can detect proximity withou
     Click on master in the Hierarchy
     Add Component → Rigidbody2D
     Set Body Type to Kinematic (you're moving it via transform.position, not physics forces, so you don't want gravity/physics pushing it around)
-    Add Component → Circle Collider 2D (leave "Is Trigger" unchecked on this one — one trigger + one normal collider in the pair is enough)
+    Add Component → box Collider 2D (leave "Is Trigger" unchecked on this one — one trigger + one normal collider in the pair is enough)
 
     2.3 Write the ResourceNode script
     This lives on the node itself and knows what it gives and how it depletes/respawns.
