@@ -1,0 +1,18 @@
+Core Concept
+Assassin Guild Simulator — an open-world pixel-style survival-craft-build management sim. You rebuild a destroyed order from scratch: gathering, building, recruiting, crafting weapons/poison, and taking commissions that escalate from small jobs to history-changing contracts.
+Story Premise
+The MC is a disabled crown prince/princess (blind, with a limp) banished after a coup. They flee with one loyal servant and build an assassin guild in secret to destroy the dynasty that took everything. The MC's divine gift is clairvoyant sight within limited range, and the power to forge a life-contract with managers — compelling absolute loyalty ("cannot betray, must protect with their lives") that lasts until the MC's death. Since the main story doesn't kill the MC off, every recruited manager is effectively permanent. The MC operates as a hidden leader; only managers know their true identity, and the first manager (the loyal servant) becomes their eyes, ears, and hands.
+Core Mechanics
+Dual-mode actions: assign an assassin (idle/timer, safe but slow) or go personally via manager (active, risky — failure benches that manager temporarily)
+Managers: gacha-collectible, one on-duty at a time, passive skill + active mission kit
+Assassins: plentiful roster, simpler stats, specialties (poison, ranged, infiltration, brute)
+World: zone-based overworld for mobile feasibility, but open enough for freeform building anywhere on the map (Medieval Dynasty–style) — including outside the main castle
+Anti-Monotony Strategy
+Freedom of base identity/specialization (poison-guild vs. weapon-guild vs. self-sufficient) gives macro purpose
+Story chapters arrive as patch-based branches in new zones — each branch has a genuinely different core mechanic/mini-game (Arknights-event style), not just reskinned systems, while sharing a stable "core grammar" (gather → produce → deliver) so players don't relearn the game each time
+Branches require assigning a manager away from the main castle; branch resources feed back into the main castle and unlock higher-tier commissions; the main castle expands as branches develop
+Branch order is fixed/authored, not player-chosen, tied to story progression
+Scattered Open-World Building
+Players can build anywhere on the map (like hunting lodges in Medieval Dynasty), but placement is a real strategic decision — bad spots risk discovery and destruction by the ruling authority. This reinforces both the "spatial management" layer and the hidden-rebellion narrative theme. Still to define: what makes a spot good/risky, warning system before destruction, stakes when a base is lost, and rewards for long-term successful concealment.
+Retention Philosophy
+Explicitly not chasing daily-quest-driven login habits. Instead aiming for "I belong there" motivation — a persistent, living world worth checking on (ambient changes, visible ownership/growth, character moments) rather than reward-gated tasks. Scoped as an indie project: "good enough" for solid monetization and experience, not competing with AAA live-service retention systems.
