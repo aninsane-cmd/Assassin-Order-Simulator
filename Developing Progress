@@ -225,7 +225,121 @@ Add a Collider2D (set to "Is Trigger") so the master can detect proximity withou
 A.2 Crafting Items
 Two new pieces this section needs:
 
-A.2.1 A data structure for recipes that isn't hardcoded C# — this is the "systems architecture before content" principle from your dev notes. Recipes should live as ScriptableObjects so adding a new craftable item later is "create asset, fill fields," not "add another if-statement."
-A.2.2 A Crafting Window UI that reads those recipes, checks the inventory, and lets the player craft.
+A data structure for recipes that isn't hardcoded C# — this is the "systems architecture before content" principle from your dev notes. Recipes should live as ScriptableObjects so adding a new craftable item later is "create asset, fill fields," not "add another if-statement."
+A Crafting Window UI that reads those recipes, checks the inventory, and lets the player craft.
 
+A.2.1 Create the Recipe data structure (ScriptableObject)
+This is the "spreadsheet, not hardcoded" pattern — each craftable item (knife, axe, hammer, campfire, torch, trap) becomes a data asset instead of a code branch.
 
+Create Scripts/CraftingRecipe.cs:
+    using UnityEngine;
+    using System.Collections.Generic;
+    
+    [CreateAssetMenu(fileName = "NewRecipe", menuName = "AssassinOrder/CraftingRecipe")]
+    public class CraftingRecipe : ScriptableObject
+    {
+        public string itemName = "Torch";
+        public List<ResourceCost> costs = new List<ResourceCost>();
+    }
+    
+    [System.Serializable]
+    public class ResourceCost
+    {
+        public string resourceName;
+        public int amount;
+    }
+[CreateAssetMenu] is the important part — it lets you right-click in the Project panel and generate new recipe assets without touching code again.
+
+A.2.2 Create your first recipe asset
+In the Project panel, right-click your Data (or make a new Recipes) folder → Create → AssassinOrder → CraftingRecipe
+Rename the asset Recipe_Torch
+In the Inspector: set Item Name to Torch, then expand Costs, set Size to 2, and fill in:
+resourceName: Stick, amount: 1
+resourceName: Stone, amount: 1
+
+Repeat to make Recipe_Knife and Recipe_Axe the same way (stick + stone is fine as placeholder costs for all three — matches your note that the first tools need to be craftable with no prerequisite, to avoid a tutorial bootstrapping problem).
+
+A.2.3 Write the CraftingManager
+This checks the inventory against a recipe's costs, and if sufficient, deducts materials and grants the item. Create Scripts/CraftingManager.cs:
+using UnityEngine;
+
+public class CraftingManager : MonoBehaviour
+{
+    public static CraftingManager Instance;
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    public bool CanCraft(CraftingRecipe recipe)
+    {
+        foreach (var cost in recipe.costs)
+        {
+            int owned = GuildMaster.Instance.inventory.ContainsKey(cost.resourceName)
+                ? GuildMaster.Instance.inventory[cost.resourceName]
+                : 0;
+
+            if (owned < cost.amount) return false;
+        }
+        return true;
+    }
+
+    public bool TryCraft(CraftingRecipe recipe)
+    {
+        if (!CanCraft(recipe)) return false;
+
+        // Deduct materials
+        foreach (var cost in recipe.costs)
+        {
+            GuildMaster.Instance.inventory[cost.resourceName] -= cost.amount;
+        }
+
+        // Grant crafted item
+        GuildMaster.Instance.AddResource(recipe.itemName, 1);
+
+        return true;
+    }
+}
+
+Notice TryCraft reuses your existing AddResource — the crafted item (Torch, Knife, Axe) just drops into the same inventory dictionary as raw materials. That's deliberate: one inventory system for everything, whether it's a gathered stick or a crafted torch, keeps this from splintering into "raw resource inventory" vs "item inventory" later.
+
+Create an empty GameObject in Hierarchy, rename it CraftingManager, attach this script to it.
+
+A.2.4 Build the Crafting Window UI
+In Hierarchy: right-click → UI → Panel, rename it CraftingWindow
+Set it inactive by default (uncheck the checkbox next to its name in the Inspector) — it should only appear when opened
+Inside CraftingWindow, add a Button for each recipe (for now, just one: CraftButton_Torch)
+Right-click CraftingWindow → UI → Button - TextMeshPro
+Rename it CraftButton_Torch, set its label text to Craft Torch
+Add a Text (TMP) element above/below the button called CraftStatusText — this will show feedback like "Not enough Stone"
+Outside the panel, add a small always-visible Button labeled Open Crafting that toggles CraftingWindow active/inactive
+
+A.2.5 Wire the button to CraftingManager
+Create Scripts/CraftingUI.cs and attach it to CraftingWindow:
+using UnityEngine;
+using TMPro;
+
+public class CraftingUI : MonoBehaviour
+{
+    public CraftingRecipe torchRecipe;
+    public TMP_Text statusText;
+
+    // Hook this to CraftButton_Torch's OnClick() in the Inspector
+    public void OnCraftTorchPressed()
+    {
+        bool success = CraftingManager.Instance.TryCraft(torchRecipe);
+        statusText.text = success ? "Crafted Torch!" : "Not enough materials.";
+    }
+}
+
+Drag Recipe_Torch into the Torch Recipe field on CraftingUI in the Inspector
+Drag CraftStatusText into the Status Text field
+On CraftButton_Torch, in its Button component's OnClick() list, drag the CraftingWindow GameObject in, then select CraftingUI → OnCraftTorchPressed()
+On the Open Crafting button's OnClick(), point it at a simple toggle script (or just call CraftingWindow.SetActive(!CraftingWindow.activeSelf) from a small UIToggle.cs — happy to write that if you want it spelled out)
+
+A.2.6 Test
+Gather a Stick and a Stone from resource nodes (per A.1)
+Open the Crafting Window
+Press Craft Torch — inventory should show Stick: 0, Stone: 0, Torch: 1
+Try crafting again with empty inventory — status text should read "Not enough materials," nothing should be deducted
