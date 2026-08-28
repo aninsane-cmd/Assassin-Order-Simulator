@@ -122,7 +122,7 @@ Add a Collider2D (set to "Is Trigger") so the master can detect proximity withou
             {
                 if (isDepleted) return;
         
-                Guildmaster.Instance.AddResource(resourceName, amount);
+                GuildMaster.Instance.AddResource(resourceName, amount);
                 Deplete();
             }
         
