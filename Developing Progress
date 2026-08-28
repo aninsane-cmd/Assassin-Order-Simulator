@@ -223,3 +223,9 @@ Add a Collider2D (set to "Is Trigger") so the master can detect proximity withou
 ---------------------------------------
 
 A.2 Crafting Items
+Two new pieces this section needs:
+
+A.2.1 A data structure for recipes that isn't hardcoded C# — this is the "systems architecture before content" principle from your dev notes. Recipes should live as ScriptableObjects so adding a new craftable item later is "create asset, fill fields," not "add another if-statement."
+A.2.2 A Crafting Window UI that reads those recipes, checks the inventory, and lets the player craft.
+
+
