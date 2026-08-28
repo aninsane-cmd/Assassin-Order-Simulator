@@ -145,11 +145,11 @@ Add a Collider2D (set to "Is Trigger") so the master can detect proximity withou
     Attach this to StickNode in the Inspector (Add Component → Resource Node). You'll see Resource Name, Amount, Respawn Time fields 
     — leave defaults or set Amount to 1, Respawn Time to 10.
 
-    A.1.3.d Add a singleton + AddResource to Guildmaster
+    A.1.3.d Add a singleton + AddResource to GuildMaster
     Your gather-node script needs a way to reach the inventory without you dragging references everywhere. 
-    Add a static Instance to Guildmaster.cs
+    Add a static Instance to GuildMaster.cs
 
-        public static Guildmaster Instance;
+        public static GuildMaster Instance;
         
         void Awake()
         {
