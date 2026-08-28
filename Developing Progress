@@ -220,31 +220,6 @@ Add a Collider2D (set to "Is Trigger") so the master can detect proximity withou
     Node should vanish, InventoryText should update to show Stick: 1
     Wait 10 seconds — node should reappear
 
-    If it doesn't fire: check the Console for errors first, then double check both the node's collider has "Is Trigger" 
-    checked and the master has a Rigidbody2D set to Kinematic 
-    — that's the #1 cause of trigger events silently not firing in Unity.
+---------------------------------------
 
-    Once this works, duplicating StickNode into StoneNode / FruitNode is just: duplicate the object, change color, 
-    change Resource Name and Amount in the Inspector 
-    — zero new code, same payoff as your Dictionary-based inventory decision earlier.
-
-    A.1.3.g Debug
-    Nothings happened when the master collided with the stick and E button pressed. We try this debug on script GatherInteraction.cs
-        void Update()
-        {
-            if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
-            {
-                Debug.Log("E pressed. Nodes in range: " + nodesInRange.Count);
-                if (nodesInRange.Count > 0)
-                {
-                    nodesInRange[0].Gather();
-                }
-            }
-        }
-        Also this
-        void OnTriggerEnter2D(Collider2D other)
-        {
-            Debug.Log("Trigger entered: " + other.gameObject.name);
-            ResourceNode node = other.GetComponent<ResourceNode>();
-            if (node != null) nodesInRange.Add(node);
-        }
+A.2 Crafting Items
