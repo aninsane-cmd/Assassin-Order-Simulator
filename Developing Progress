@@ -820,7 +820,7 @@ public class GuildMaster : MonoBehaviour
     }
 }
 
-B.5.8 Dynamic Collect Button
+B.6.1 Dynamic Collect Button
 
 Let's make it context-sensitive: hidden by default, appears only when a resource node is in range, disappears when out of range or after gathering it.
 This reuses nodesInRange — the list GatherInteraction.cs already tracks — so no new tracking logic is needed, just toggling the button's visibility whenever that list changes.
@@ -896,3 +896,328 @@ public class GatherInteraction : MonoBehaviour
     }
 }
 
+B.6.2 Mobile Friendly Collect Button
+
+I want to make the collect button is an image of hand (we can use placeholder for now) that appears in the right corner of the resources. as the master walks close to the resoures, there will appear hand symbol on the right corner of each resources. we the symbol pressed, there's a respon of loading wheel replacing that hand symbol at the same size, for about 1-2 second. so the player is waiting for master gathering the resources. once the resource is depleted, the symbol is gone, and there's a text on the screen that read "x (resource) collected". for example, 1 stick collected. because we will use mobile for this game, the interraction is to hold the touchscreen in the touch area like joystick. the currect touch area of joystick is the entire screen exept UI area(not the left side only). is it possible? so the movement joystick will only reach if the player drag the joystick by holding it. while when the collect button appears, player have to hold the screen in place, not drag it. so the drag means walking, while hold means collect if near resources
+
+Yes, totally possible — and it's actually a cleaner interaction model for mobile than a fixed button. Here's how the pieces fit together, then the code.
+
+## The plan
+
+**Touch zone:** Change `MovementTouchZone` from left-half to full screen. Since it sits earlier in the Hierarchy than other UI (buttons, prompts), those still get clicked normally — Unity's raycaster hits the topmost rendered element first, so nothing on top gets blocked by the full-screen zone underneath.
+
+**Hold vs. drag:** On `OnPointerDown`, don't move the joystick yet — just record where the touch started. Then:
+- If the finger moves past a small threshold (~20px) → it's a **drag** → activate the joystick, movement kicks in.
+- If the finger stays roughly still for a short delay (~0.3s) → it's a **hold** → trigger gather, if a resource is in range.
+
+**Per-node hand icon:** Instead of one global button, each resource node gets its own small UI prompt that follows it on-screen (top-right offset), spawned when the node enters range and destroyed when it exits/depletes.
+
+**Gather flow:** Hold triggers a coroutine — swap hand icon → loading wheel, wait ~1.5s, then actually deplete the node and show "1 Stick collected" text.
+
+---
+
+## 1. NodePromptUI.cs (new — the per-node hand icon/loading wheel)
+
+```csharp
+using UnityEngine;
+
+public class NodePromptUI : MonoBehaviour
+{
+    public GameObject handIcon;
+    public GameObject loadingWheel;
+
+    public void ShowHand()
+    {
+        handIcon.SetActive(true);
+        loadingWheel.SetActive(false);
+    }
+
+    public void ShowLoading()
+    {
+        handIcon.SetActive(false);
+        loadingWheel.SetActive(true);
+    }
+}
+```
+
+**Build the prefab:**
+- Canvas → right-click → UI → Image, rename `NodePrompt`, size ~60x60
+- Inside it, add child Image `HandIcon` (placeholder sprite, any hand/pointer icon or just a colored circle for now)
+- Add another child Image `LoadingWheel` (placeholder circle, different color), set inactive by default
+- Add `NodePromptUI` component to `NodePrompt`, drag `HandIcon` and `LoadingWheel` into their slots
+- Drag `NodePrompt` into your Prefabs folder, then delete the Hierarchy instance
+
+Optional spin for the wheel — add this to `LoadingWheel`:
+
+```csharp
+using UnityEngine;
+
+public class LoadingWheelSpin : MonoBehaviour
+{
+    public float spinSpeed = 200f;
+    void Update() => transform.Rotate(0, 0, -spinSpeed * Time.deltaTime);
+}
+```
+
+## 2. CollectedTextUI.cs (new — the "1 Stick collected" popup)
+
+```csharp
+using UnityEngine;
+using TMPro;
+using System.Collections;
+
+public class CollectedTextUI : MonoBehaviour
+{
+    public static CollectedTextUI Instance;
+    public TMP_Text text;
+
+    void Awake()
+    {
+        Instance = this;
+        text.text = "";
+    }
+
+    public void Show(string message)
+    {
+        StopAllCoroutines();
+        StartCoroutine(ShowRoutine(message));
+    }
+
+    IEnumerator ShowRoutine(string message)
+    {
+        text.text = message;
+        yield return new WaitForSeconds(1.5f);
+        text.text = "";
+    }
+}
+```
+
+Add a TMP Text object to your Canvas (e.g. top-center), rename `CollectedText`, attach this script, drag the text component into the `Text` slot.
+
+## 3. GatherInteraction.cs (replace entirely)
+
+```csharp
+using UnityEngine;
+using UnityEngine.InputSystem;
+using System.Collections;
+using System.Collections.Generic;
+
+public class GatherInteraction : MonoBehaviour
+{
+    public static GatherInteraction Instance;
+
+    public GameObject nodePromptPrefab;
+    public Transform canvasTransform;
+    public float gatherDuration = 1.5f;
+    public Vector3 promptWorldOffset = new Vector3(0.3f, 0.3f, 0f);
+
+    private List<ResourceNode> nodesInRange = new List<ResourceNode>();
+    private Dictionary<ResourceNode, NodePromptUI> activePrompts = new Dictionary<ResourceNode, NodePromptUI>();
+    private bool isGathering = false;
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void Update()
+    {
+        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            TryGather();
+        }
+    }
+
+    void LateUpdate()
+    {
+        foreach (var kvp in activePrompts)
+        {
+            if (kvp.Key == null) continue;
+            Vector3 screenPos = Camera.main.WorldToScreenPoint(kvp.Key.transform.position + promptWorldOffset);
+            kvp.Value.GetComponent<RectTransform>().position = screenPos;
+        }
+    }
+
+    public void TryGather()
+    {
+        if (isGathering || nodesInRange.Count == 0) return;
+        StartCoroutine(GatherRoutine(nodesInRange[0]));
+    }
+
+    IEnumerator GatherRoutine(ResourceNode node)
+    {
+        isGathering = true;
+
+        if (activePrompts.TryGetValue(node, out NodePromptUI prompt))
+            prompt.ShowLoading();
+
+        yield return new WaitForSeconds(gatherDuration);
+
+        // Player may have walked away mid-gather — cancel if so
+        if (node != null && nodesInRange.Contains(node))
+        {
+            string resourceName = node.resourceName;
+            int amount = node.amount;
+
+            node.Gather();
+
+            CollectedTextUI.Instance.Show(amount + " " + resourceName + " collected");
+        }
+        else if (activePrompts.TryGetValue(node, out NodePromptUI cancelledPrompt))
+        {
+            cancelledPrompt.ShowHand(); // reset icon if cancelled
+        }
+
+        isGathering = false;
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        ResourceNode node = other.GetComponent<ResourceNode>();
+        if (node != null)
+        {
+            nodesInRange.Add(node);
+            SpawnPrompt(node);
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        ResourceNode node = other.GetComponent<ResourceNode>();
+        if (node != null)
+        {
+            nodesInRange.Remove(node);
+            RemovePrompt(node);
+        }
+    }
+
+    void SpawnPrompt(ResourceNode node)
+    {
+        if (activePrompts.ContainsKey(node)) return;
+        GameObject promptObj = Instantiate(nodePromptPrefab, canvasTransform);
+        NodePromptUI ui = promptObj.GetComponent<NodePromptUI>();
+        ui.ShowHand();
+        activePrompts[node] = ui;
+    }
+
+    void RemovePrompt(ResourceNode node)
+    {
+        if (activePrompts.TryGetValue(node, out NodePromptUI ui))
+        {
+            Destroy(ui.gameObject);
+            activePrompts.Remove(node);
+        }
+    }
+}
+```
+
+Note: this naturally fixes the earlier crash too — the node disables its own collider on deplete, which fires `OnTriggerExit2D` automatically, so we never manually `RemoveAt`/`Remove` in a way that double-fires.
+
+On the `Master` GameObject, remove the old `gatherButton` reference field usage (it's gone now) and instead:
+- Drag your `NodePrompt` prefab into `Node Prompt Prefab`
+- Drag your `Canvas` into `Canvas Transform`
+
+## 4. DynamicJoystick.cs (replace — adds hold-vs-drag detection)
+
+```csharp
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+public class DynamicJoystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
+{
+    public RectTransform joystickBackground;
+    public RectTransform joystickHandle;
+    public float handleRange = 100f;
+    public float dragThreshold = 20f;
+    public float holdTimeToCollect = 0.3f;
+
+    public static Vector2 Direction { get; private set; } = Vector2.zero;
+
+    private RectTransform canvasRect;
+    private Vector2 pointerDownScreenPos;
+    private bool isDragging = false;
+    private bool isHolding = false;
+    private float pointerDownTime;
+
+    void Awake()
+    {
+        canvasRect = GetComponentInParent<Canvas>().GetComponent<RectTransform>();
+    }
+
+    void Update()
+    {
+        if (isHolding && !isDragging && Time.time - pointerDownTime >= holdTimeToCollect)
+        {
+            GatherInteraction.Instance?.TryGather();
+            isHolding = false; // release+hold again to collect the next one
+        }
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        pointerDownScreenPos = eventData.position;
+        pointerDownTime = Time.time;
+        isDragging = false;
+        isHolding = true;
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
+        joystickBackground.anchoredPosition = localPoint;
+        joystickHandle.anchoredPosition = Vector2.zero;
+        joystickBackground.gameObject.SetActive(false);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        float distance = Vector2.Distance(eventData.position, pointerDownScreenPos);
+
+        if (!isDragging && distance > dragThreshold)
+        {
+            isDragging = true;
+            isHolding = false;
+            joystickBackground.gameObject.SetActive(true);
+        }
+
+        if (isDragging)
+        {
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                joystickBackground, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
+
+            Vector2 clamped = Vector2.ClampMagnitude(localPoint, handleRange);
+            joystickHandle.anchoredPosition = clamped;
+            Direction = clamped / handleRange;
+        }
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        Direction = Vector2.zero;
+        isDragging = false;
+        isHolding = false;
+        joystickBackground.gameObject.SetActive(false);
+    }
+}
+```
+
+## 5. Editor changes for the touch zone
+
+- Click `MovementTouchZone` → Rect Transform:
+  - Anchor Min: X 0, Y 0
+  - Anchor Max: X 1, Y 1
+  - Offsets: all 0
+- Leave everything else on it as-is
+
+## 6. Cleanup
+
+- Delete the old `GatherButton` GameObject from the Hierarchy (fully replaced by per-node prompts now)
+- On `Master`, in `GatherInteraction`'s Inspector fields, wire the two new references mentioned above
+
+## Test checklist
+
+- Tap-and-drag anywhere on screen → master walks, no prompt triggers
+- Walk near a stick → hand icon appears pinned to its top-right corner
+- Tap-and-hold still (no drag) for ~0.3s while near it → icon swaps to loading wheel
+- After ~1.5s → node depletes, icon disappears, "1 Stick collected" flashes on screen then fades
+- Walk mid-gather away from the node before the wheel finishes → gather cancels, icon resets to hand (or disappears if you've left range)
+
+One open design note worth flagging: right now if two nodes are in range at once, it always gathers `nodesInRange[0]` (whichever entered range first), not necessarily the closest one. Fine for a prototype with sparse spawns — let me know if you want nearest-node targeting once nodes get denser.
