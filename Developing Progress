@@ -459,17 +459,15 @@ public class CameraFollow : MonoBehaviour
 A.4.8 Randomize Respwan
 What if I want to make the stone spawnable as well? and what if both stone and stick i want them to randomize again after respwan
 
-Step 1: Create the StoneNode prefab
-
-1.1 — Duplicate the prefab asset
+Create the StoneNode prefab
+Duplicate the prefab asset
 
 In the Project panel, go to your Prefabs folder
 Click on StickNode to select it
 Press Ctrl+D (or right-click → Duplicate)
 Rename the new copy to StoneNode
 
-1.2 — Edit its properties
-
+Edit its properties
 Double-click StoneNode to open it in Prefab Edit Mode (a focused view where you edit just this prefab)
 In the Inspector, find the Resource Node component
 Change Resource Name from Stick to Stone
@@ -576,3 +574,18 @@ public class ResourceNode : MonoBehaviour
         col.enabled = true;
     }
 }
+
+---------------------------------------
+
+B. MOBILE CONVERSION
+1. Install Android Build Support — a Unity Hub module; without it, Android won't even appear as a build option
+2. Switch Build Platform to Android — in Unity's Build Settings
+3. Configure Player Settings — package name, minimum API level, orientation (locked portrait/landscape)
+4. Set up Canvas Scaler — so your UI (Crafting Window, buttons, text) scales correctly on a phone screen instead of assuming a fixed desktop resolution
+5. Replace WASD movement with an on-screen touch joystick
+6. Replace the "E" key gather interaction with an on-screen Gather button
+7. Build and deploy to your actual phone over USB, to test for real
+8. Fix on-device issues — this step is somewhat open-ended; things like touch UI accidentally blocking world taps, text too small, or buttons too close together tend to only show up once you're holding the actual phone
+
+---------------------------------------
+
