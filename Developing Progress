@@ -3,10 +3,12 @@ I want to create a mobile game, open world pixel style, with simulator crafting 
 A. Build the core loop first, ugly and small using placeholder 
 Before art — prototype the systems: gather resource → craft item.
 
-B. Systems architecture before content scaling
+B. Conversing to Mobile
+
+C. Systems architecture before content scaling
 Before you make 20 masters or 50 assassins, build the data structure so adding more is just filling in spreadsheets, not rewriting code — item/character data as external files (JSON/ScriptableObjects), not hardcoded.
 
-C. Then, and only then: content, gacha, monetization, polish
+D. Then, and only then: content, gacha, monetization, polish
 
 ---------------------------------------
 
