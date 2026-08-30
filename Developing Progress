@@ -434,3 +434,145 @@ You should see somewhere between 5 and 10 small brown squares scattered around t
 Walk the master to one, press E, confirm it gathers and vanishes, Stick count ticks up
 Wait 10 seconds — that specific one should reappear in the same spot it spawned (respawn doesn't re-randomize position, just brings the same instance back)
 Press Play again (stop and restart) a couple of times — confirm the count and positions change each time
+
+A.4.7 Camera Follow Master
+
+Create CameraFollow.cs
+In Scripts folder, right-click → Create → MonoBehaviour Script → name it CameraFollow
+using UnityEngine;
+
+public class CameraFollow : MonoBehaviour
+{
+    public Transform target;
+    public float smoothSpeed = 5f;
+    public Vector3 offset = new Vector3(0f, 0f, -10f);
+
+    void LateUpdate()
+    {
+        if (target == null) return;
+
+        Vector3 desiredPosition = target.position + offset;
+        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+    }
+}
+
+A.4.8 Randomize Respwan
+What if I want to make the stone spawnable as well? and what if both stone and stick i want them to randomize again after respwan
+
+Step 1: Create the StoneNode prefab
+
+1.1 — Duplicate the prefab asset
+
+In the Project panel, go to your Prefabs folder
+Click on StickNode to select it
+Press Ctrl+D (or right-click → Duplicate)
+Rename the new copy to StoneNode
+
+1.2 — Edit its properties
+
+Double-click StoneNode to open it in Prefab Edit Mode (a focused view where you edit just this prefab)
+In the Inspector, find the Resource Node component
+Change Resource Name from Stick to Stone
+Find the Sprite Renderer component → click the Color swatch → change it to a gray tone, so it's visually distinct from the brown/red stick color
+Click the back arrow (top-left of Scene view, or click elsewhere in Hierarchy) to exit Prefab Edit Mode — this saves your changes automatically
+
+You now have two separate prefabs: StickNode (brown, gives "Stick") and StoneNode (gray, gives "Stone") — same underlying script and collider setup, just different data.
+
+Modify ResourceSpawner.cs to spawn multiple resource types
+using UnityEngine;
+
+public class ResourceSpawner : MonoBehaviour
+{
+    public GameObject[] resourcePrefabs;
+    public int minCount = 5;
+    public int maxCount = 10;
+    public Vector2 areaMin = new Vector2(-8f, -8f);
+    public Vector2 areaMax = new Vector2(8f, 8f);
+
+    void Start()
+    {
+        SpawnResources();
+    }
+
+    void SpawnResources()
+    {
+        foreach (GameObject prefab in resourcePrefabs)
+        {
+            int count = Random.Range(minCount, maxCount + 1);
+            for (int i = 0; i < count; i++)
+            {
+                Vector3 spawnPos = GetRandomPosition();
+                Instantiate(prefab, spawnPos, Quaternion.identity);
+            }
+        }
+    }
+
+    public Vector3 GetRandomPosition()
+    {
+        float x = Random.Range(areaMin.x, areaMax.x);
+        float y = Random.Range(areaMin.y, areaMax.y);
+        return new Vector3(x, y, 0f);
+    }
+}
+Re-wire the Inspector fields on ResourceSpawner
+
+Since the script changed from a single stickPrefab slot to a resourcePrefabs array, Unity will have reset that field — we need to fill it in fresh.
+
+In the Hierarchy, click on ResourceSpawner
+In the Inspector, find Resource Spawner (Script) component
+You'll see a field called Resource Prefabs with a Size value (probably 0)
+Set Size to 2
+Two slots will appear, Element 0 and Element 1
+Drag StickNode (from Prefabs folder) into Element 0
+Drag StoneNode into Element 1
+Double-check Min Count is still 5, Max Count still 10, Area Min (-8,-8), Area Max (8,8) — these should have survived since those field names didn't change
+
+Modify ResourceNode.cs for randomized respawn position
+using UnityEngine;
+
+public class ResourceNode : MonoBehaviour
+{
+    public string resourceName = "Stick";
+    public int amount = 1;
+    public float respawnTime = 10f;
+
+    private SpriteRenderer sr;
+    private Collider2D col;
+    private bool isDepleted = false;
+    private ResourceSpawner spawner;
+
+    void Awake()
+    {
+        sr = GetComponent<SpriteRenderer>();
+        col = GetComponent<Collider2D>();
+        spawner = FindFirstObjectByType<ResourceSpawner>();
+    }
+
+    public void Gather()
+    {
+        if (isDepleted) return;
+
+        GuildMaster.Instance.AddResource(resourceName, amount);
+        Deplete();
+    }
+
+    void Deplete()
+    {
+        isDepleted = true;
+        sr.enabled = false;
+        col.enabled = false;
+        Invoke(nameof(Respawn), respawnTime);
+    }
+
+    void Respawn()
+    {
+        if (spawner != null)
+        {
+            transform.position = spawner.GetRandomPosition();
+        }
+
+        isDepleted = false;
+        sr.enabled = true;
+        col.enabled = true;
+    }
+}
