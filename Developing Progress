@@ -591,3 +591,148 @@ B. MOBILE CONVERSION
 
 ---------------------------------------
 
+B.3: Configure Player Settings
+
+This is where we set the package name, minimum Android version, and screen orientation — required before Android will accept a build at all.
+
+Go to Edit → Project Settings
+In the left sidebar of that window, click Player
+You'll see tabs for different platforms at the top of the Player panel — make sure the Android tab (small Android robot icon) is selected, not the default/PC one
+Expand the Other Settings section (click to expand if collapsed)
+Find Package Name — it'll look like com.CompanyName.ProductName. Change it to something like:
+com.yourname.assassinguildsimulator
+(lowercase, no spaces, this uniquely identifies your app — you can't easily change it later without it counting as a different app, so pick something you're okay keeping)
+Find Minimum API Level — set it to Android 7.0 'Nougat' (API level 24) — a safe modern baseline that still covers the vast majority of real Android phones
+Scroll up slightly to Resolution and Presentation section, find Default Orientation — set it to Portrait (since your game is a top-down phone-held-upright experience, not landscape)
+
+Package Name: com.aninsanedev.assassinordersimulator ✅
+Version: 1.0 ✅
+Minimum API Level: 25 ✅
+Target API Level: Automatic (highest installed) ✅ — good default, lets Unity pick the newest SDK you have installed
+Active Input Handling: Input System Package (New) ✅ — correct, since your MasterMovement.cs and GatherInteraction.cs both use UnityEngine.InputSystem, not the old Input Manager
+
+---------------------------------------
+
+B.4: Canvas Scaler
+
+Select your Canvas
+In the Hierarchy, click on Canvas
+In the Inspector, find the Canvas Scaler component (it should already exist, since Unity adds it automatically when you create a Canvas)
+
+Configure it for mobile
+Find UI Scale Mode — change it from Constant Pixel Size (the default) to Scale With Screen Size
+Two new fields will appear: Reference Resolution X and Y — set them to:
+X: 1080
+Y: 1920
+(This is a standard portrait phone resolution — your UI will be designed against this reference, then Unity scales it to fit whatever actual screen it runs on)
+Find Screen Match Mode — set it to Match Width Or Height
+Find the Match slider right below it — set it to 0.5 (a balanced middle-ground between matching width and height, generally the safest default for mixed content)
+
+Save your scene
+Since this is a scene-level change (not a script), make sure to save: File → Save (or Ctrl+S), so it doesn't get lost.
+
+---------------------------------------
+
+B.5: Add a touch joystick for movement
+
+We'll build this from scratch as a simple, functional joystick — a background "base" circle and a draggable "handle" circle inside it, read via Unity's UI drag events, then feed that direction into your existing MasterMovement.cs instead of keyboard input.
+
+B.5.1 — Create the joystick background
+
+In Hierarchy, right-click Canvas → UI → Image
+Rename it JoystickBackground
+In Rect Transform, set:
+Anchors: Min (0, 0), Max (0, 0) — anchors to bottom-left corner
+Pivot: X: 0.5, Y: 0.5
+Pos X: 200, Pos Y: 200
+Width: 200, Height: 200
+In the Image component, find Color, set Alpha (the 4th value, click the color swatch to access it) to something low like 100/255, so it's semi-transparent — just a visual guide, not solid
+
+B.5.2 — Create the joystick handle
+
+Right-click JoystickBackground → UI → Image
+Rename it JoystickHandle
+Rect Transform:
+Anchors: Min (0.5, 0.5), Max (0.5, 0.5) — centered within the background
+Pos X: 0, Pos Y: 0
+Width: 80, Height: 80
+Color: fully opaque, any color that stands out (e.g., white or light gray)
+
+B.5.3 — Hide the joystick by default
+
+Since it'll now appear only when touched, it shouldn't be visible at rest.
+
+Click JoystickBackground in the Hierarchy
+In the Inspector, uncheck the box next to its name (top-left) to deactivate it — this also hides JoystickHandle since it's a child
+
+B.5.4 — Create an invisible touch zone
+
+This is what actually detects the touch and tells the joystick where to appear. We'll restrict it to the left half of the screen, so it doesn't interfere with OpenCraftingButton or the Gather button we'll add later on the right side.
+
+Right-click Canvas → UI → Image
+Rename it MovementTouchZone
+In Rect Transform, click the Anchor presets icon (top-left square icon in Rect Transform) and hold Alt+Shift, then click the stretch-stretch preset (bottom-right option in that grid) — this makes it fill available space. Then manually set:
+Anchor Min: X: 0, Y: 0
+Anchor Max: X: 0.5, Y: 1
+Left/Top/Right/Bottom offsets: all 0
+This stretches it to cover the entire left half of the screen, full height.
+In the Image component, click the Color swatch → drag Alpha down to 0 (fully invisible)
+Leave Raycast Target checked (should be on by default) — this is what lets it still detect touches despite being invisible
+
+B.5.5 — Write DynamicJoystick.cs
+
+Create the script in your Scripts folder, paste this in:
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+public class DynamicJoystick : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
+{
+    public RectTransform joystickBackground;
+    public RectTransform joystickHandle;
+    public float handleRange = 100f;
+
+    public static Vector2 Direction { get; private set; } = Vector2.zero;
+
+    private RectTransform canvasRect;
+
+    void Awake()
+    {
+        canvasRect = GetComponentInParent<Canvas>().GetComponent<RectTransform>();
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        joystickBackground.gameObject.SetActive(true);
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
+        joystickBackground.anchoredPosition = localPoint;
+        joystickHandle.anchoredPosition = Vector2.zero;
+
+        OnDrag(eventData);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            joystickBackground, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
+
+        Vector2 clamped = Vector2.ClampMagnitude(localPoint, handleRange);
+        joystickHandle.anchoredPosition = clamped;
+
+        Direction = clamped / handleRange;
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        Direction = Vector2.zero;
+        joystickBackground.gameObject.SetActive(false);
+    }
+}
+
+B.5.6 — Attach and wire it
+Click MovementTouchZone in the Hierarchy
+Add Component → search DynamicJoystick → add it
+Drag JoystickBackground into the Joystick Background slot
+Drag JoystickHandle into the Joystick Handle slot
+For Handle Range — check JoystickBackground's Rect Transform Width value, and set Handle Range to roughly half of that (e.g. if Width is 200, set Handle Range to 100)
