@@ -19,6 +19,8 @@ A. CORE LOOP
 4. Random Spawn Material
 5. (Update later)
 
+---------------------------------------
+
 A.1 Gathering Resources 
 Player walks in the open world collecting resources. The player have to interact with the resources (for example, click button collect), so they can pick the resources. Otherwise, they will passing by the resources. The gathered resources added to inventory. 
 
@@ -736,3 +738,161 @@ Add Component → search DynamicJoystick → add it
 Drag JoystickBackground into the Joystick Background slot
 Drag JoystickHandle into the Joystick Handle slot
 For Handle Range — check JoystickBackground's Rect Transform Width value, and set Handle Range to roughly half of that (e.g. if Width is 200, set Handle Range to 100)
+
+Right now MasterMovement.cs only reads from Keyboard.current. We need it to also check DynamicJoystick.Direction and use whichever input is active — this way your keyboard controls still work in the editor for testing, while touch works on the actual device.
+
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class MasterMovement : MonoBehaviour
+{
+    public float moveSpeed = 5f;
+
+    void Update()
+    {
+        Vector2 input = Vector2.zero;
+
+        if (Keyboard.current != null)
+        {
+            if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) input.x -= 1;
+            if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed) input.x += 1;
+            if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) input.y += 1;
+            if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) input.y -= 1;
+        }
+
+        // If the joystick is being used, let it override keyboard input
+        if (DynamicJoystick.Direction.sqrMagnitude > 0.01f)
+        {
+            input = DynamicJoystick.Direction;
+        }
+
+        input = input.normalized;
+        transform.position += (Vector3)(input * moveSpeed * Time.deltaTime);
+    }
+}
+
+B.5.7 — Fixing Leftover Button
+Since you deleted the GatherStickButton GameObject, that reference is now null, and calling .onClick on a null object throws exactly this error.
+
+This is actually a good moment to fully clean this up rather than patch around it. Looking at the whole script, timerText, gatherStickButton, gatherStoneButton, StartGathering(), and CompleteGathering() are all part of the old placeholder gather system — the one your dev notes already flagged as a legacy conflict, now fully superseded by ResourceNode.cs + GatherInteraction.cs. Since those buttons are gone for good, this dead code should come out entirely rather than staying around as a trap for future null-reference errors.
+
+Replace the entire contents of GuildMaster.cs with this:
+
+using UnityEngine;
+using TMPro;
+using System.Collections.Generic;
+
+public class GuildMaster : MonoBehaviour
+{
+    public static GuildMaster Instance;
+    public TMP_Text inventoryText;
+
+    public Dictionary<string, int> inventory = new Dictionary<string, int>();
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void Start()
+    {
+        inventory["Stick"] = 0;
+        inventory["Stone"] = 0;
+
+        UpdateInventoryDisplay();
+    }
+
+    void UpdateInventoryDisplay()
+    {
+        string display = "";
+        foreach (var kvp in inventory)
+        {
+            display += kvp.Key + ": " + kvp.Value + "\n";
+        }
+        inventoryText.text = display;
+    }
+
+    public void AddResource(string name, int amount)
+    {
+        if (!inventory.ContainsKey(name)) inventory[name] = 0;
+        inventory[name] += amount;
+        UpdateInventoryDisplay();
+    }
+}
+
+B.5.8 Dynamic Collect Button
+
+Let's make it context-sensitive: hidden by default, appears only when a resource node is in range, disappears when out of range or after gathering it.
+This reuses nodesInRange — the list GatherInteraction.cs already tracks — so no new tracking logic is needed, just toggling the button's visibility whenever that list changes.
+
+Make the button appear/disappear based on proximity
+Replace GatherInteraction.cs entirely with this:
+
+using UnityEngine;
+using UnityEngine.InputSystem;
+using System.Collections.Generic;
+
+public class GatherInteraction : MonoBehaviour
+{
+    public GameObject gatherButton;
+
+    private List<ResourceNode> nodesInRange = new List<ResourceNode>();
+
+    void Start()
+    {
+        if (gatherButton != null) gatherButton.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            TryGather();
+        }
+    }
+
+    // Hook this to GatherButton's OnClick() in the Inspector
+    public void OnGatherButtonPressed()
+    {
+        TryGather();
+    }
+
+    void TryGather()
+    {
+        if (nodesInRange.Count > 0)
+        {
+            nodesInRange[0].Gather();
+            nodesInRange.RemoveAt(0);
+            UpdateButtonVisibility();
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        ResourceNode node = other.GetComponent<ResourceNode>();
+        if (node != null)
+        {
+            nodesInRange.Add(node);
+            UpdateButtonVisibility();
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        ResourceNode node = other.GetComponent<ResourceNode>();
+        if (node != null)
+        {
+            nodesInRange.Remove(node);
+            UpdateButtonVisibility();
+        }
+    }
+
+    void UpdateButtonVisibility()
+    {
+        if (gatherButton != null)
+        {
+            gatherButton.SetActive(nodesInRange.Count > 0);
+        }
+    }
+}
+
