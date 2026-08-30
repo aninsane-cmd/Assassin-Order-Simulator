@@ -14,7 +14,8 @@ A. CORE LOOP
 1. Gather 
 2. Craft
 3. Build
-4. (Update later)
+4. Random Spawn Material
+5. (Update later)
 
 A.1 Gathering Resources 
 Player walks in the open world collecting resources. The player have to interact with the resources (for example, click button collect), so they can pick the resources. Otherwise, they will passing by the resources. The gathered resources added to inventory. 
@@ -343,3 +344,93 @@ Gather a Stick and a Stone from resource nodes (per A.1)
 Open the Crafting Window
 Press Craft Torch — inventory should show Stick: 0, Stone: 0, Torch: 1
 Try crafting again with empty inventory — status text should read "Not enough materials," nothing should be deducted
+
+---------------------------------------
+
+A.3 Build
+(Skipped temporary)
+
+---------------------------------------
+
+A.4 Random Spawn Material
+On random stick spawning — this is new work. Here's the plan, three pieces:
+
+Convert your existing StickNode into a Prefab (so we can stamp out multiple copies)
+Write a ResourceSpawner.cs that, on scene start, picks a random count between 5–10 and instantiates that many stick prefabs at random positions within a defined area
+Delete the old single manually-placed StickNode instance so it doesn't sit there alongside the randomly spawned ones
+
+This gets you the "walk around and look for it" feel — sticks scattered unpredictably each playthrough instead of always in the same spot.
+
+A.4.1: Turn StickNode into a Prefab
+
+In the Project panel, if you don't have one already, right-click → Create → Folder, name it Prefabs
+In the Hierarchy, click and drag StickNode down into that Prefabs folder in the Project panel
+You'll see a new prefab asset appear, and StickNode in the Hierarchy will now show its text in blue, meaning it's now a prefab instance
+
+A.4.2: Decide your spawn area boundaries
+
+Your Ground object has Scale X: 20, Y: 20, centered at world origin (0,0) — meaning it spans roughly -10 to +10 on both X and Y. We'll spawn sticks inside that, pulled in a bit so nothing spawns right at the edge:
+
+Area Min: X: -8, Y: -8
+Area Max: X: 8, Y: 8
+
+If your Ground isn't at (0,0) or isn't scale 20, click on Ground in the Hierarchy and check its Transform — tell me the actual Position and Scale values if they differ, and I'll adjust these numbers.
+
+A.4.3: Write ResourceSpawner.cs
+In Scripts folder, right-click → Create → MonoBehaviour Script → name it ResourceSpawner
+Open it, delete the default content, paste this:
+
+using UnityEngine;
+
+public class ResourceSpawner : MonoBehaviour
+{
+    public GameObject stickPrefab;
+    public int minCount = 5;
+    public int maxCount = 10;
+    public Vector2 areaMin = new Vector2(-8f, -8f);
+    public Vector2 areaMax = new Vector2(8f, 8f);
+
+    void Start()
+    {
+        SpawnSticks();
+    }
+
+    void SpawnSticks()
+    {
+        int count = Random.Range(minCount, maxCount + 1); // maxCount is exclusive in Random.Range(int,int), so +1 makes it inclusive
+        for (int i = 0; i < count; i++)
+        {
+            float x = Random.Range(areaMin.x, areaMax.x);
+            float y = Random.Range(areaMin.y, areaMax.y);
+            Vector3 spawnPos = new Vector3(x, y, 0f);
+            Instantiate(stickPrefab, spawnPos, Quaternion.identity);
+        }
+    }
+}
+
+Why this works with what you already have: each spawned copy is a full instance of the StickNode prefab, meaning it carries its own ResourceNode script, Collider2D, SpriteRenderer — so gathering, depleting, and the 10-second respawn timer all work independently per-stick, automatically. Nothing about GatherInteraction.cs or ResourceNode.cs needs to change.
+
+Save the file and let it compile clean before continuing.
+
+A.4.4: Create the spawner GameObject in the scene
+In Hierarchy, right-click empty space → Create Empty
+Rename it ResourceSpawner
+With it selected, Add Component → search ResourceSpawner → add your script
+In the Inspector, you'll now see fields: Stick Prefab, Min Count, Max Count, Area Min, Area Max
+Drag the StickNode prefab (from the Project panel's Prefabs folder) into the Stick Prefab slot
+Leave Min Count: 5 and Max Count: 10 as-is
+Set Area Min to X: -8, Y: -8 and Area Max to X: 8, Y: 8
+
+A.4.5: Remove the old manually-placed StickNode
+
+Now that the spawner will generate sticks at runtime, the original hand-placed one in the Hierarchy is redundant (and would sit there permanently, never depleting-and-respawning like the random ones do the same way — it's fine either way honestly, but cleanest to remove it for clarity).
+
+Right-click the StickNode in the Hierarchy → Delete
+
+A.4.6: Test
+Press Play
+Switch to the Game tab
+You should see somewhere between 5 and 10 small brown squares scattered around the green ground — in different spots than last time, since it's randomized
+Walk the master to one, press E, confirm it gathers and vanishes, Stick count ticks up
+Wait 10 seconds — that specific one should reappear in the same spot it spawned (respawn doesn't re-randomize position, just brings the same instance back)
+Press Play again (stop and restart) a couple of times — confirm the count and positions change each time
